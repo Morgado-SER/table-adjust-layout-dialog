@@ -30,6 +30,10 @@ npx serve .
     └── icons/           # SVG icons (checkbox, close, eye, eye-off, drag handles)
 ```
 
+## Live preview
+
+[https://morgado-ser.github.io/table-adjust-layout-dialog/](https://morgado-ser.github.io/table-adjust-layout-dialog/)
+
 ## Repository
 
 [https://github.com/Morgado-SER/table-adjust-layout-dialog](https://github.com/Morgado-SER/table-adjust-layout-dialog)
