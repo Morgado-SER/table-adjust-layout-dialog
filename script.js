@@ -25,10 +25,30 @@
     tooltip.classList.remove('tooltip--visible');
   }, true);
 
-  // Hide tooltip during drag
   document.addEventListener('dragstart', function () {
     tooltip.classList.remove('tooltip--visible');
   }, true);
+
+  // ── Original order tracking ────────────────────────────────────────────────
+  // Stamp every item with its original position once on load.
+  function initOrder() {
+    getItems(visibleList).forEach((item, i) => {
+      item.dataset.order = i;
+    });
+  }
+
+  // Re-insert an item into the visible list at its original position.
+  function insertInVisibleOrder(item) {
+    const order = parseInt(item.dataset.order, 10);
+    const successor = getItems(visibleList).find(
+      el => parseInt(el.dataset.order, 10) > order
+    );
+    if (successor) {
+      visibleList.insertBefore(item, successor);
+    } else {
+      visibleList.appendChild(item);
+    }
+  }
 
   // ── Visibility button state ────────────────────────────────────────────────
   function updateVisibilityBtn(item, isNowHidden) {
@@ -102,7 +122,15 @@
     if (dragSrc !== this) {
       const srcParent = dragSrc.parentNode;
       const tgtParent = this.parentNode;
-      tgtParent.insertBefore(dragSrc, this);
+
+      if (srcParent === hiddenList && tgtParent === visibleList) {
+        // Returning to visible list → restore original position
+        insertInVisibleOrder(dragSrc);
+      } else {
+        // Reordering within a list, or moving to hidden → honour drop position
+        tgtParent.insertBefore(dragSrc, this);
+      }
+
       initDragEvents(dragSrc);
       if (srcParent !== tgtParent) {
         updateVisibilityBtn(dragSrc, tgtParent === hiddenList);
@@ -114,7 +142,7 @@
     return false;
   }
 
-  // Allow dropping onto the list panels (including empty ones)
+  // Allow dropping onto the list panels (including when empty)
   function initListDrop(list) {
     list.addEventListener('dragover', function (e) {
       e.preventDefault();
@@ -126,7 +154,12 @@
       const srcList = dragSrc ? dragSrc.closest('.column-list') : null;
       const items = getItems(this);
       if (dragSrc && !items.includes(dragSrc)) {
-        this.appendChild(dragSrc);
+        if (this === visibleList && srcList === hiddenList) {
+          // Returning to visible list → restore original position
+          insertInVisibleOrder(dragSrc);
+        } else {
+          this.appendChild(dragSrc);
+        }
         initDragEvents(dragSrc);
         if (srcList !== this) {
           updateVisibilityBtn(dragSrc, this === hiddenList);
@@ -151,7 +184,8 @@
     }
   });
 
-  // Initialise
+  // ── Initialise ─────────────────────────────────────────────────────────────
+  initOrder();
   getItems(visibleList).forEach(initDragEvents);
   getItems(hiddenList).forEach(initDragEvents);
   initListDrop(visibleList);
@@ -165,7 +199,13 @@
     if (!item) return;
     const currentList = item.closest('.column-list');
     const targetList = currentList === visibleList ? hiddenList : visibleList;
-    targetList.appendChild(item);
+
+    if (targetList === visibleList) {
+      insertInVisibleOrder(item);
+    } else {
+      targetList.appendChild(item);
+    }
+
     initDragEvents(item);
     updateVisibilityBtn(item, targetList === hiddenList);
     updateEmptyState(visibleList);
