@@ -1,7 +1,7 @@
 // Drag-and-drop reordering for the visible columns list
 (function () {
   const visibleList = document.getElementById('visible-columns');
-  const hiddenList = document.getElementById('hidden-columns');
+  const hiddenList  = document.getElementById('hidden-columns');
 
   let dragSrc = null;
 
@@ -15,7 +15,7 @@
     if (!btn) return;
     const rect = btn.getBoundingClientRect();
     tooltip.textContent = btn.dataset.tooltip;
-    tooltip.style.top = (rect.bottom + window.scrollY + 8) + 'px';
+    tooltip.style.top  = (rect.bottom + window.scrollY + 8) + 'px';
     tooltip.style.left = (rect.left + window.scrollX + rect.width / 2) + 'px';
     tooltip.classList.add('tooltip--visible');
   }, true);
@@ -29,25 +29,35 @@
     tooltip.classList.remove('tooltip--visible');
   }, true);
 
-  // ── Original order tracking ────────────────────────────────────────────────
-  // Stamp every item with its original position once on load.
+  // ── Position tracking ──────────────────────────────────────────────────────
+  // Give every item a stable ID so we can reference neighbours.
   function initOrder() {
     getItems(visibleList).forEach((item, i) => {
       item.dataset.order = i;
     });
   }
 
-  // Re-insert an item into the visible list at its original position.
-  function insertInVisibleOrder(item) {
-    const order = parseInt(item.dataset.order, 10);
-    const successor = getItems(visibleList).find(
-      el => parseInt(el.dataset.order, 10) > order
-    );
-    if (successor) {
-      visibleList.insertBefore(item, successor);
-    } else {
-      visibleList.appendChild(item);
+  // Snapshot the data-order values of all items that come AFTER `item`
+  // in the visible list at this moment. Called right before the item leaves.
+  function recordRestorePoint(item) {
+    const items = getItems(visibleList);
+    const idx   = items.indexOf(item);
+    if (idx === -1) return; // item is not currently in the visible list
+    const after = items.slice(idx + 1).map(el => el.dataset.order);
+    item.dataset.restoreBefore = after.join(',');
+  }
+
+  // Re-insert item at the position recorded by recordRestorePoint.
+  function insertAtRestorePoint(item) {
+    const candidates = (item.dataset.restoreBefore || '').split(',').filter(Boolean);
+    for (const order of candidates) {
+      const target = getItems(visibleList).find(el => el.dataset.order === order);
+      if (target) {
+        visibleList.insertBefore(item, target);
+        return;
+      }
     }
+    visibleList.appendChild(item); // item was last, or all successors are hidden
   }
 
   // ── Visibility button state ────────────────────────────────────────────────
@@ -83,10 +93,10 @@
   function initDragEvents(item) {
     item.querySelectorAll('img').forEach(img => img.setAttribute('draggable', 'false'));
     item.addEventListener('dragstart', onDragStart);
-    item.addEventListener('dragend', onDragEnd);
-    item.addEventListener('dragover', onDragOver);
+    item.addEventListener('dragend',   onDragEnd);
+    item.addEventListener('dragover',  onDragOver);
     item.addEventListener('dragleave', onDragLeave);
-    item.addEventListener('drop', onDrop);
+    item.addEventListener('drop',      onDrop);
   }
 
   function onDragStart(e) {
@@ -123,7 +133,10 @@
       const srcParent = dragSrc.parentNode;
       const tgtParent = this.parentNode;
 
-      tgtParent.insertBefore(dragSrc, this);
+      // Record position before leaving the visible list
+      if (srcParent === visibleList) recordRestorePoint(dragSrc);
+
+      tgtParent.insertBefore(dragSrc, this); // drag always respects drop position
 
       initDragEvents(dragSrc);
       if (srcParent !== tgtParent) {
@@ -146,9 +159,13 @@
       e.stopPropagation();
       hiddenList.classList.remove('column-list--drag-over');
       const srcList = dragSrc ? dragSrc.closest('.column-list') : null;
-      const items = getItems(this);
+      const items   = getItems(this);
       if (dragSrc && !items.includes(dragSrc)) {
-        this.appendChild(dragSrc);
+        // Record position before leaving the visible list
+        if (srcList === visibleList) recordRestorePoint(dragSrc);
+
+        this.appendChild(dragSrc); // drag always respects drop position
+
         initDragEvents(dragSrc);
         if (srcList !== this) {
           updateVisibilityBtn(dragSrc, this === hiddenList);
@@ -180,23 +197,24 @@
   initListDrop(visibleList);
   initListDrop(hiddenList);
 
-  // Eye button click: move column between lists + update icon/tooltip
+  // Eye button click: record position when hiding, restore it when showing
   document.addEventListener('click', function (e) {
     const btn = e.target.closest('.column-actions .icon-btn:first-child');
     if (!btn) return;
-    const item = btn.closest('.column-item');
+    const item        = btn.closest('.column-item');
     if (!item) return;
     const currentList = item.closest('.column-list');
-    const targetList = currentList === visibleList ? hiddenList : visibleList;
+    const goingToHidden = currentList === visibleList;
 
-    if (targetList === visibleList) {
-      insertInVisibleOrder(item);
+    if (goingToHidden) {
+      recordRestorePoint(item);   // snapshot position before hiding
+      hiddenList.appendChild(item);
     } else {
-      targetList.appendChild(item);
+      insertAtRestorePoint(item); // restore to last known position
     }
 
     initDragEvents(item);
-    updateVisibilityBtn(item, targetList === hiddenList);
+    updateVisibilityBtn(item, goingToHidden);
     updateEmptyState(visibleList);
     updateEmptyState(hiddenList);
   });
