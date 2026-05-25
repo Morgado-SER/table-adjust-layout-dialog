@@ -40,6 +40,7 @@
   function onDragEnd() {
     this.classList.remove('dragging');
     document.querySelectorAll('.column-item').forEach(el => el.classList.remove('drag-over'));
+    hiddenList.classList.remove('column-list--drag-over');
   }
 
   function onDragOver(e) {
@@ -83,18 +84,31 @@
     });
     list.addEventListener('drop', function (e) {
       e.stopPropagation();
+      hiddenList.classList.remove('column-list--drag-over');
       const items = getItems(this);
       if (dragSrc && !items.includes(dragSrc)) {
         this.appendChild(dragSrc);
         initDragEvents(dragSrc);
-        const srcParent = dragSrc.parentNode === this
-          ? (visibleList === this ? hiddenList : visibleList)
-          : dragSrc.parentNode;
         updateEmptyState(visibleList);
         updateEmptyState(hiddenList);
       }
     });
   }
+
+  // Drag-over highlight on the hidden panel
+  hiddenList.addEventListener('dragenter', function (e) {
+    e.preventDefault();
+    if (dragSrc && !getItems(hiddenList).includes(dragSrc)) {
+      hiddenList.classList.add('column-list--drag-over');
+    }
+  });
+
+  hiddenList.addEventListener('dragleave', function (e) {
+    // Only remove when the cursor truly leaves the panel (not entering a child)
+    if (!hiddenList.contains(e.relatedTarget)) {
+      hiddenList.classList.remove('column-list--drag-over');
+    }
+  });
 
   // Initialise
   getItems(visibleList).forEach(initDragEvents);
