@@ -40,7 +40,7 @@
       btn.dataset.tooltip = 'Show column';
       btn.setAttribute('aria-label', 'Show column');
     } else {
-      img.src = 'assets/icons/eye-off.svg';
+      img.src = 'assets/icons/eye-off2.svg';
       btn.dataset.tooltip = 'Hide column';
       btn.setAttribute('aria-label', 'Hide column');
     }
