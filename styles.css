@@ -171,10 +171,20 @@ body {
   background: #f3f4f8;
   border-color: var(--color-primary);
   border-style: dashed;
+  /* Always behave as a centred flex container, regardless of how many items are inside */
+  display: flex !important;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  /* Re-apply stretching that column-list--empty normally provides */
+  flex: 1;
+  min-height: 180px;
 }
 
-.column-list--drag-over .empty-state {
-  display: none;
+/* Hide everything inside the panel while dragging over it */
+.column-list--drag-over .empty-state,
+.column-list--drag-over .column-item {
+  display: none !important;
 }
 
 .drop-hint {
