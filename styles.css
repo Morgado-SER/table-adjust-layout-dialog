@@ -120,7 +120,6 @@ body {
 /* List wrapper */
 .column-list-wrapper {
   padding: 8px 8px 0 20px;
-  flex: 1;
   display: flex;
   flex-direction: column;
 }
@@ -129,17 +128,14 @@ body {
   padding: 8px 20px 0 8px;
 }
 
-/* Column list */
+/* Column list — fixed height on both panels */
 .column-list {
   border: 1px solid var(--color-light-gray);
   border-radius: 8px;
-  overflow: hidden;
-  position: relative;
-}
-
-.column-list:not(.column-list--empty) {
   overflow-y: auto;
-  max-height: 272px;
+  overflow-x: hidden;
+  position: relative;
+  height: 264px;
 }
 
 /* Custom scrollbar */
@@ -159,11 +155,9 @@ body {
 
 /* Empty state list */
 .column-list--empty {
-  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 180px;
 }
 
 /* Drag-over state for the hidden panel */
@@ -176,9 +170,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  /* Re-apply stretching that column-list--empty normally provides */
-  flex: 1;
-  min-height: 180px;
+  /* height inherited from .column-list */
 }
 
 /* Hide everything inside the panel while dragging over it */
