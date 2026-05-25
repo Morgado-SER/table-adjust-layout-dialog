@@ -256,9 +256,6 @@ body {
   transition: background 0.1s;
 }
 
-.column-item:last-child {
-  border-bottom: none;
-}
 
 .column-item:hover {
   background: #fafafa;
