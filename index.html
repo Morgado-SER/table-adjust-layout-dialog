@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Adjust Layout Dialog</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="backdrop">
+    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+
+      <!-- Header -->
+      <div class="modal-header">
+        <h2 id="modal-title" class="modal-title">Adjust layout</h2>
+        <button class="icon-btn close-btn" aria-label="Close dialog">
+          <img src="assets/icons/close.svg" width="24" height="24" alt="" />
+        </button>
+      </div>
+
+      <!-- Description -->
+      <div class="modal-description">
+        <p>Select the columns to be displayed, and specify the order in which they should be displayed.</p>
+      </div>
+
+      <!-- Two-column area -->
+      <div class="columns-area">
+
+        <!-- Left: Show in table -->
+        <div class="column-panel">
+          <p class="panel-label">Show in table</p>
+          <div class="column-list-wrapper">
+            <div class="column-list" id="visible-columns">
+              <div class="column-item" draggable="true">
+                <span class="drag-handle"><img src="assets/icons/dot-grid-vertical-2x3.svg" width="20" height="20" alt="" /></span>
+                <span class="column-name">Country</span>
+                <div class="column-actions">
+                  <button class="icon-btn" aria-label="Toggle visibility"><img src="assets/icons/eye.svg" width="22" height="22" alt="" /></button>
+                  <button class="icon-btn" aria-label="More options"><img src="assets/icons/dot-grid-vertical-1x3.svg" width="22" height="22" alt="" /></button>
+                </div>
+              </div>
+              <div class="column-item" draggable="true">
+                <span class="drag-handle"><img src="assets/icons/dot-grid-vertical-2x3.svg" width="20" height="20" alt="" /></span>
+                <span class="column-name">Author</span>
+                <div class="column-actions">
+                  <button class="icon-btn" aria-label="Toggle visibility"><img src="assets/icons/eye.svg" width="22" height="22" alt="" /></button>
+                  <button class="icon-btn" aria-label="More options"><img src="assets/icons/dot-grid-vertical-1x3.svg" width="22" height="22" alt="" /></button>
+                </div>
+              </div>
+              <div class="column-item" draggable="true">
+                <span class="drag-handle"><img src="assets/icons/dot-grid-vertical-2x3.svg" width="20" height="20" alt="" /></span>
+                <span class="column-name">Album</span>
+                <div class="column-actions">
+                  <button class="icon-btn" aria-label="Toggle visibility"><img src="assets/icons/eye.svg" width="22" height="22" alt="" /></button>
+                  <button class="icon-btn" aria-label="More options"><img src="assets/icons/dot-grid-vertical-1x3.svg" width="22" height="22" alt="" /></button>
+                </div>
+              </div>
+              <div class="column-item" draggable="true">
+                <span class="drag-handle"><img src="assets/icons/dot-grid-vertical-2x3.svg" width="20" height="20" alt="" /></span>
+                <span class="column-name">Artist</span>
+                <div class="column-actions">
+                  <button class="icon-btn" aria-label="Toggle visibility"><img src="assets/icons/eye.svg" width="22" height="22" alt="" /></button>
+                  <button class="icon-btn" aria-label="More options"><img src="assets/icons/dot-grid-vertical-1x3.svg" width="22" height="22" alt="" /></button>
+                </div>
+              </div>
+              <div class="column-item" draggable="true">
+                <span class="drag-handle"><img src="assets/icons/dot-grid-vertical-2x3.svg" width="20" height="20" alt="" /></span>
+                <span class="column-name">Lyrics</span>
+                <div class="column-actions">
+                  <button class="icon-btn" aria-label="Toggle visibility"><img src="assets/icons/eye.svg" width="22" height="22" alt="" /></button>
+                  <button class="icon-btn" aria-label="More options"><img src="assets/icons/dot-grid-vertical-1x3.svg" width="22" height="22" alt="" /></button>
+                </div>
+              </div>
+              <div class="column-item" draggable="true">
+                <span class="drag-handle"><img src="assets/icons/dot-grid-vertical-2x3.svg" width="20" height="20" alt="" /></span>
+                <span class="column-name">Creation date</span>
+                <div class="column-actions">
+                  <button class="icon-btn" aria-label="Toggle visibility"><img src="assets/icons/eye.svg" width="22" height="22" alt="" /></button>
+                  <button class="icon-btn" aria-label="More options"><img src="assets/icons/dot-grid-vertical-1x3.svg" width="22" height="22" alt="" /></button>
+                </div>
+              </div>
+              <div class="column-item" draggable="true">
+                <span class="drag-handle"><img src="assets/icons/dot-grid-vertical-2x3.svg" width="20" height="20" alt="" /></span>
+                <span class="column-name">Modified date</span>
+                <div class="column-actions">
+                  <button class="icon-btn" aria-label="Toggle visibility"><img src="assets/icons/eye.svg" width="22" height="22" alt="" /></button>
+                  <button class="icon-btn" aria-label="More options"><img src="assets/icons/dot-grid-vertical-1x3.svg" width="22" height="22" alt="" /></button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Hidden in table -->
+        <div class="column-panel">
+          <p class="panel-label">Hidden in table</p>
+          <div class="column-list-wrapper">
+            <div class="column-list column-list--empty" id="hidden-columns">
+              <div class="empty-state">
+                <div class="empty-state-icon">
+                  <img src="assets/icons/eye-off.svg" width="28" height="28" alt="" />
+                </div>
+                <div class="empty-state-text">
+                  <p class="empty-state-title">No hidden columns</p>
+                  <p class="empty-state-subtitle">Drag a column here or use the visibility action to hide it.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Checkboxes -->
+      <div class="properties-row">
+        <label class="checkbox-label">
+          <input type="checkbox" class="checkbox-input" checked />
+          <span class="checkbox-custom">
+            <img src="assets/icons/checkbox.svg" class="checkbox-icon" width="16" height="16" alt="" />
+          </span>
+          <span class="checkbox-text">Show gridlines for rows</span>
+        </label>
+        <label class="checkbox-label">
+          <input type="checkbox" class="checkbox-input" checked />
+          <span class="checkbox-custom">
+            <img src="assets/icons/checkbox.svg" class="checkbox-icon" width="16" height="16" alt="" />
+          </span>
+          <span class="checkbox-text">Show gridlines for columns</span>
+        </label>
+      </div>
+
+      <!-- Footer -->
+      <div class="modal-footer">
+        <button class="btn btn--secondary">Cancel</button>
+        <button class="btn btn--primary">OK</button>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
