@@ -123,13 +123,7 @@
       const srcParent = dragSrc.parentNode;
       const tgtParent = this.parentNode;
 
-      if (srcParent === hiddenList && tgtParent === visibleList) {
-        // Returning to visible list → restore original position
-        insertInVisibleOrder(dragSrc);
-      } else {
-        // Reordering within a list, or moving to hidden → honour drop position
-        tgtParent.insertBefore(dragSrc, this);
-      }
+      tgtParent.insertBefore(dragSrc, this);
 
       initDragEvents(dragSrc);
       if (srcParent !== tgtParent) {
@@ -154,12 +148,7 @@
       const srcList = dragSrc ? dragSrc.closest('.column-list') : null;
       const items = getItems(this);
       if (dragSrc && !items.includes(dragSrc)) {
-        if (this === visibleList && srcList === hiddenList) {
-          // Returning to visible list → restore original position
-          insertInVisibleOrder(dragSrc);
-        } else {
-          this.appendChild(dragSrc);
-        }
+        this.appendChild(dragSrc);
         initDragEvents(dragSrc);
         if (srcList !== this) {
           updateVisibilityBtn(dragSrc, this === hiddenList);
