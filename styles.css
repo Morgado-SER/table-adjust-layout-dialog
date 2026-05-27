@@ -289,6 +289,11 @@ body {
   cursor: grab;
 }
 
+/* Muted name on hidden items */
+#hidden-columns .column-name {
+  color: var(--color-gray);
+}
+
 /* Column name */
 .column-name {
   flex: 1;
