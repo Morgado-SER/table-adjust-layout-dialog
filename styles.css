@@ -339,64 +339,6 @@ body {
   flex-shrink: 0;
 }
 
-/* Properties row (checkboxes) */
-.properties-row {
-  display: flex;
-  gap: 16px;
-  align-items: center;
-  padding: 24px 22px 0;
-  flex-shrink: 0;
-}
-
-/* Checkbox */
-.checkbox-label {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  flex-shrink: 0;
-}
-
-.checkbox-input {
-  position: absolute;
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.checkbox-custom {
-  width: 16px;
-  height: 16px;
-  border-radius: 3.5px;
-  border: 1.5px solid var(--color-border-btn);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  transition: border-color 0.15s;
-}
-
-/* When checked, the SVG already carries the full filled appearance */
-.checkbox-input:checked + .checkbox-custom {
-  border-color: transparent;
-}
-
-.checkbox-icon {
-  display: block;
-}
-
-.checkbox-input:not(:checked) + .checkbox-custom .checkbox-icon {
-  display: none;
-}
-
-.checkbox-text {
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 1;
-  color: var(--color-black);
-  white-space: nowrap;
-}
-
 /* Tooltip */
 .tooltip {
   position: absolute;
