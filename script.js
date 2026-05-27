@@ -219,6 +219,23 @@
     updateEmptyState(hiddenList);
   });
 
+  // Arrow up / down buttons — reorder within the visible list
+  document.addEventListener('click', function (e) {
+    const btn = e.target.closest('.icon-btn[aria-label="Move up"], .icon-btn[aria-label="Move down"]');
+    if (!btn) return;
+    const item = btn.closest('.column-item');
+    if (!item || item.closest('.column-list') !== visibleList) return;
+
+    const items = getItems(visibleList);
+    const idx   = items.indexOf(item);
+
+    if (btn.getAttribute('aria-label') === 'Move up' && idx > 0) {
+      visibleList.insertBefore(item, items[idx - 1]);
+    } else if (btn.getAttribute('aria-label') === 'Move down' && idx < items.length - 1) {
+      visibleList.insertBefore(items[idx + 1], item);
+    }
+  });
+
   // Close / Cancel buttons
   document.querySelector('.close-btn')?.addEventListener('click', () => {
     document.querySelector('.backdrop').style.display = 'none';

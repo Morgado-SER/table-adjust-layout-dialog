@@ -311,8 +311,22 @@ body {
 .column-actions {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 2px;
   flex-shrink: 0;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s;
+}
+
+.column-item:hover .column-actions {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Arrow buttons are only meaningful in the visible panel */
+#hidden-columns .icon-btn[aria-label="Move up"],
+#hidden-columns .icon-btn[aria-label="Move down"] {
+  display: none;
 }
 
 /* Icon button */
