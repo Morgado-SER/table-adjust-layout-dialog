@@ -257,13 +257,19 @@ body {
 }
 
 
-.column-item:hover {
+.column-item.is-hovered,
+.column-item:focus-within {
   background: #fafafa;
 }
 
 .column-item.dragging {
   opacity: 0.4;
   cursor: grabbing;
+}
+
+.column-item.dragging .column-actions {
+  opacity: 0 !important;
+  pointer-events: none;
 }
 
 .column-item.drag-over {
@@ -287,11 +293,6 @@ body {
   flex-shrink: 0;
   color: var(--color-gray);
   cursor: grab;
-}
-
-/* Muted name on hidden items */
-#hidden-columns .column-name {
-  color: var(--color-gray);
 }
 
 /* Column name */
@@ -318,7 +319,8 @@ body {
   transition: opacity 0.15s;
 }
 
-.column-item:hover .column-actions {
+.column-item.is-hovered .column-actions,
+.column-item:focus-within .column-actions {
   opacity: 1;
   pointer-events: auto;
 }

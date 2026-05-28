@@ -90,13 +90,21 @@
     list.classList.toggle('column-list--empty', items.length === 0);
   }
 
+  // Named handlers so addEventListener deduplicates on repeated initDragEvents calls
+  function onMouseEnterItem() { this.classList.add('is-hovered'); }
+  function onMouseLeaveItem() { this.classList.remove('is-hovered'); }
+
   function initDragEvents(item) {
     item.querySelectorAll('img').forEach(img => img.setAttribute('draggable', 'false'));
-    item.addEventListener('dragstart', onDragStart);
-    item.addEventListener('dragend',   onDragEnd);
-    item.addEventListener('dragover',  onDragOver);
-    item.addEventListener('dragleave', onDragLeave);
-    item.addEventListener('drop',      onDrop);
+    item.addEventListener('dragstart',  onDragStart);
+    item.addEventListener('dragend',    onDragEnd);
+    item.addEventListener('dragover',   onDragOver);
+    item.addEventListener('dragleave',  onDragLeave);
+    item.addEventListener('drop',       onDrop);
+    // mouseenter/mouseleave fire only on physical cursor crossings — not on DOM
+    // reorders — so they are immune to the stale-hover problem.
+    item.addEventListener('mouseenter', onMouseEnterItem);
+    item.addEventListener('mouseleave', onMouseLeaveItem);
   }
 
   function onDragStart(e) {
@@ -104,12 +112,32 @@
     this.classList.add('dragging');
     e.dataTransfer.effectAllowed = 'move';
     const rect = this.getBoundingClientRect();
-    e.dataTransfer.setDragImage(this, e.clientX - rect.left, e.clientY - rect.top);
+
+    // setDragImage captures the element before CSS repaints, so the .dragging
+    // rule hasn't hidden the actions yet. Use a clean clone with actions removed.
+    const ghost = this.cloneNode(true);
+    const ghostActions = ghost.querySelector('.column-actions');
+    if (ghostActions) ghostActions.style.display = 'none';
+    Object.assign(ghost.style, {
+      position:  'fixed',
+      top:       '-9999px',
+      left:      '-9999px',
+      width:     rect.width + 'px',
+      background: '#fff',
+      opacity:   '1',
+    });
+    document.body.appendChild(ghost);
+    e.dataTransfer.setDragImage(ghost, e.clientX - rect.left, e.clientY - rect.top);
+    requestAnimationFrame(() => ghost.remove());
   }
 
   function onDragEnd() {
     this.classList.remove('dragging');
-    document.querySelectorAll('.column-item').forEach(el => el.classList.remove('drag-over'));
+    // mouseleave doesn't fire reliably during a drag, so clear any stale hover state.
+    document.querySelectorAll('.column-item').forEach(el => {
+      el.classList.remove('drag-over');
+      el.classList.remove('is-hovered');
+    });
     hiddenList.classList.remove('column-list--drag-over');
   }
 
@@ -228,11 +256,25 @@
 
     const items = getItems(visibleList);
     const idx   = items.indexOf(item);
+    let moved   = false;
 
     if (btn.getAttribute('aria-label') === 'Move up' && idx > 0) {
       visibleList.insertBefore(item, items[idx - 1]);
+      moved = true;
     } else if (btn.getAttribute('aria-label') === 'Move down' && idx < items.length - 1) {
       visibleList.insertBefore(items[idx + 1], item);
+      moved = true;
+    }
+
+    if (moved) {
+      item.classList.remove('is-hovered');
+      if (e.detail === 0) {
+        // Keyboard (Space / Enter): keep focus so :focus-within shows actions.
+        btn.focus();
+      } else {
+        // Mouse: blur so :focus-within doesn't keep actions visible after the move.
+        btn.blur();
+      }
     }
   });
 
